@@ -1,0 +1,238 @@
+.cart {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 800px;
+}
+.cart-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.cart-header,
+.cart-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 1200px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #fff;
+  box-shadow: 0px 0px 5px 0px #7f7f7f;
+  .cartlogo {
+    height: 50px;
+  }
+  .imgcard {
+    display: flex;
+  }
+  .title {
+    font-size: 30px;
+    font-weight: bolder;
+    height: 60px;
+    font-family: monospace;
+    color: #176800;
+    display: flex;
+    align-items: center;
+  }
+  .total {
+    display: flex;
+    align-items: center;
+
+    font-weight: bolder;
+    height: 60px;
+    font-family: monospace;
+
+    .text {
+      margin: 10px;
+      font-size: 25px;
+      color: #9b8f11;
+      font-weight: 600;
+    }
+    .price {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 40px;
+      color: #176800;
+      border-radius: 5px;
+      box-shadow: 0px 0px 3px 0px #7f7f7f;
+    }
+  }
+  .proceedtocheckout {
+    padding: 10px 20px;
+    font-size: 30px;
+    font-family: monospace;
+    font-weight: 600;
+    color: #9b8f11;
+    border: none;
+    background-color: transparent;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 0px #7f7f7f;
+    transition: all 0.2s ease-in-out;
+  }
+  .proceedtocheckout:hover {
+    background-color: #9b8f11;
+    color: #fff;
+  }
+  .proceedtocheckout:active {
+    opacity: 0.8;
+    box-shadow: 0px 0px 0px 0px #7f7f7f;
+  }
+}
+
+.cart-images-container img {
+  height: 200px;
+  width: 200px;
+  border-radius: 10px;
+}
+.cart-item-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  height: 180px;
+  padding: 10px;
+  .delete {
+    height: 50px;
+    background: transparent;
+
+    box-shadow: 0px 0px 3px 0px #7f7f7f;
+    color: #f33434;
+    width: 200px;
+    font-size: 25px;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+    border: 0px solid #f33434;
+  }
+
+  .delete:hover {
+    background-color: #f33434;
+    color: #fff;
+  }
+  .delete:active {
+    opacity: 0.8;
+    box-shadow: 0px 0px 0px 0px #7f7f7f;
+  }
+  .edit-cart {
+    display: flex;
+    width: 200px;
+    height: 50px;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    transition: all 0.2s ease-in-out;
+
+    button,
+    div {
+      font-size: 35px;
+      width: 64px;
+      height: 50px;
+      height: 50px;
+      background: transparent;
+      border: none;
+      box-shadow: 0px 0px 3px 0px #7f7f7f;
+    }
+    .decrement-quantity {
+      border-radius: 5px 0px 0px 5px;
+      transition: all 0.2s ease-in-out;
+    }
+    .increment-quantity {
+      border-radius: 0px 5px 5px 0px;
+      transition: all 0.2s ease-in-out;
+    }
+    .decrement-quantity:hover,
+    .increment-quantity:hover {
+      background-color: #176800;
+      color: #fff;
+    }
+    .decrement-quantity:active,
+    .increment-quantity:active {
+      box-shadow: 0px 0px 0px 0px #7f7f7f;
+      opacity: 0.8;
+    }
+    .quantity {
+      text-align: center;
+      width: 64px;
+    }
+  }
+
+  .addtocart:hover {
+    background-color: #176800;
+    color: #fff;
+  }
+  .addtocart:active {
+    opacity: 0.8;
+  }
+}
+
+.cart-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 1000px;
+  margin: 20px;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 5px 0px #7f7f7f;
+
+  .message {
+    font-size: 40px;
+    width: 1000px;
+    font-family: monospace;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.cart-item-details {
+  width: 280px;
+  height: 180px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  .name {
+    font-size: 30px;
+    font-weight: bolder;
+    height: 60px;
+    font-family: monospace;
+  }
+  .quantity {
+    font-size: 18px;
+    font-family: "Lucida Sans";
+  }
+  .price {
+    display: flex;
+    font-family: verdana;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 20px 0px;
+    .cost {
+      color: #176800;
+      font-size: 30px;
+      font-weight: 700;
+    }
+    .per-gram {
+      font-size: 17px;
+    }
+  }
+}
+.cart-item-total {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 180px;
+  width: 180px;
+  padding: 10px;
+  .total {
+    font-size: 40px;
+    font-weight: 500;
+    font-family: verdana;
+    color: #176800;
+  }
+}

@@ -1,0 +1,99 @@
+.App{
+  margin-top: 50px;
+}
+.container{
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+.Header{
+  position:fixed;
+  top: 0px;
+  left: 0px;
+  height: 50px;
+  width:100vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: #fff;
+  box-shadow: 0px 0px 5px 0px #7f7f7f;
+  z-index: 1000;
+
+}
+
+
+.Header-button{
+  position: relative;
+  border:none;
+  background-color: transparent;
+  color: #000;
+  font-family: monospace;
+  font-size: 20px;
+  font-weight: 600;
+}
+.Header-button:hover{
+  scale:1.1;
+}
+.Header-button:active{
+  color:#ff0000
+}
+
+.Header .buttons{
+  display:flex;
+  width:20%;
+  justify-content: space-evenly;
+}
+
+.Header .Header-logo{
+  position: relative;
+  height: 50px;
+  left: 5%;
+}
+
+.Header .Header-searchbar{
+  position: relative;
+  height: 35px;
+  width: 23%;
+  padding:0px 20px;
+  left:5%;
+  border: 1px solid #ececec;
+  border-radius: 18px;
+  box-shadow: 0px 0px 2px 0px #7f7f7f;
+  font-family: monospace;
+  font-size: 20px;  
+}
+
+.Header-icon{
+  position:relative;
+  font-size: 25px;
+  color: #000;
+  margin-left:0px;
+} 
+.Header-icon:hover{
+  scale:1.1;
+}
+.Header-icon:active{
+  color:#ff0000
+  
+}
+  
+.Header-search{
+  position: relative;
+  font-size: 25px;
+  left: -2.2%;
+  border-radius: 50%;
+  z-index: 1000;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Header-searchicon{
+  height: 25px;
+  width: 25px;
+}
+
+.Home{
+  background-color: #ececec; 
+}
+

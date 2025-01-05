@@ -1,0 +1,204 @@
+.images-container img {
+  height: 240px;
+  width: 240px;
+  border-radius: 10px;
+}
+.item-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin:10px 0px 0px 0px;
+  button {
+    height: 40px;
+    background: transparent;
+    border-radius: 5px;
+    box-shadow: 0px 0px 3px 0px #7f7f7f;
+  }
+  .favourite {
+    color: #f33434;
+    width: 40px;
+    font-size: 25px;
+    transition: all 0.2s ease-in-out;
+    border: 0px solid #f33434;
+  }
+
+  .favourite:hover {
+    background-color: #f33434;
+    color: #fff;
+  }
+  .favourite:active {
+    opacity: 0.8;
+  }
+  .addtocart {
+    color: #176800;
+    width: 190px;
+    font-family: monospace;
+    font-size: 20px;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+    border: none;
+  }
+
+  .addtocart:hover {
+    background-color: #176800;
+    color: #fff;
+  }
+  .addtocart:active {
+    opacity: 0.8;
+  }
+}
+
+.item-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0px 0px 5px 0px #7f7f7f;
+}
+
+.item-details {
+  width: 240px;
+  padding: 10px 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+  .name {
+    font-size: 24px;
+    font-weight: bolder;
+    height: 50px;
+    font-family: monospace;
+    display: flex;
+    align-items: center;
+  }
+  .description {
+    font-size: 16px;
+    font-weight: 200;
+    height: 35px;
+    font-family: verdana;
+    margin:5px 0px;
+  }
+  .quantity {
+    font-size: 16px;
+    font-family: verdana;
+  }
+  .price {
+    display: flex;
+    font-family: verdana;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 10px 0px;
+    .cost {
+      color: #176800;
+      font-size: 27px;
+      font-weight: 700;
+    }
+    .per-gram {
+      font-size: 16px;
+    }
+  }
+}
+
+.shop-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  width:1200px;
+}
+
+.edit-cart {
+  display: flex;
+  width: 200px;
+  height: 40px;
+  justify-content:end;
+  align-items: center;
+  font-size: 20px;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+
+  button,
+  div {
+    font-size: 27px;
+    width: 60px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    box-shadow: 0px 0px 3px 0px #7f7f7f;
+    margin:0px 0px 0px 5px;
+    text-align: center;
+  }
+  .decrement-quantity {
+    border-radius: 5px 0px 0px 5px;
+    transition: all 0.2s ease-in-out;
+  }
+  .increment-quantity {
+    border-radius: 0px 5px 5px 0px;
+    transition: all 0.2s ease-in-out;
+  }
+  .decrement-quantity:hover,
+  .increment-quantity:hover {
+    background-color: #176800;
+    color: #fff;
+  }
+  .decrement-quantity:active,
+  .increment-quantity:active {
+    box-shadow: 0px 0px 0px 0px #7f7f7f;
+    opacity: 0.8;
+  }
+  .quantity {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: 27px;
+    width: 60px;
+  }
+}
+.Toastify__toast-container {
+  font-family: monospace;
+  font-size: 20px;
+  margin:50px 20px;
+}
+.no-orders{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  font-weight: bold;
+  font-family: monospace;
+  padding:50px 50px;
+  box-shadow: 0px 0px 5px 0px #7f7f7f;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  button{
+    font-size: 20px;
+    font-weight: bold;
+    font-family: monospace;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #7f7f7f;
+    transition: all 0.2s ease-in-out;
+    border:none;
+    padding:10px 20px;
+    margin:20px;
+    background-color: #fff;
+    color:#28a745;
+  }
+  button:hover{
+    background-color: #28a745;
+    color:#fff;
+  }
+  button:active{
+    opacity: 0.8;
+    box-shadow: 0px 0px 0px 0px #7f7f7f;
+  }
+}
+pre{
+  font-family: monospace;
+  font-size: 16px;
+}
