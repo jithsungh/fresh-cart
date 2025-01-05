@@ -1,0 +1,110 @@
+.addAddress {
+  width: 1000px;
+  margin: 20px;
+  padding: 10px;
+  box-shadow: 0 0 5px 0 #7f7f7f;
+  background-color: #fff;
+  border-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100000;
+}
+.form-input-address {
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  .MuiTextField-root {
+    margin: 5px;
+  }
+  h1 {
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 30px;
+    color: green;
+    margin: 5px;
+  }
+  .two-row {
+    display: flex;
+    width: 100%;
+    .MuiTextField-root {
+      flex: 1; /* Make each TextField take up equal space */
+      margin: 5px;
+    }
+  }
+  .two-row-two {
+    display: flex;
+    width: 100%;
+
+    .MuiTextField-root:nth-child(1) {
+      margin: 5px;
+      flex: 2;
+    }
+    .MuiTextField-root:nth-child(2) {
+      flex: 3;
+      margin: 5px;
+    }
+  }
+  .two-row-three {
+    display: flex;
+    width: 100%;
+
+    .MuiTextField-root:nth-child(1) {
+      margin: 5px;
+      flex: 4;
+    }
+    .MuiTextField-root:nth-child(2) {
+      flex: 2;
+      margin: 5px;
+    }
+  }
+  .add-address-button {
+    margin: 5px;
+    height: 55px;
+    background-color: green;
+    font-size: 25px;
+    font-weight: bold;
+    font-family: monospace;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px 0px #7f7f7f;
+  }
+}
+.map {
+  border: 2px solid green;
+  margin:5px;
+  flex:1;
+}
+
+.MuiInputLabel-root {
+  color: #137e2c; /* Default label color */
+}
+
+.MuiInputLabel-root.Mui-focused {
+  color: #137e2c; /* Focused label color */
+}
+.address-input .MuiOutlinedInput-root {
+  fieldset {
+    border-color: rgb(50, 50, 50); /* Default outline color */
+  }
+}
+.address-input .MuiOutlinedInput-root:hover fieldset {
+  border-color: #e01b49; /* Hover outline color */
+}
+
+/* For focused outline color */
+.address-input .MuiOutlinedInput-root.Mui-focused fieldset {
+  border-color: green; /* Focused outline color */
+}
+
+.address-input .MuiInputLabel-root {
+  color: #507d5b; /* Default label color */
+}
+
+.address-input .MuiInputLabel-root.Mui-focused {
+  color: green; /* Focused label color */
+}

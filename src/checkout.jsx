@@ -9,12 +9,16 @@ import {
   collection,
   getDocs,
   addDoc,
+  updateDoc,
   getDoc,
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase-config";
 import "./styles/checkout.css";
 import { useUser } from "./UserContext";
+import AddAddress from "./addAddress";
+import ProtectedRoute from "./ProtectedRoute";
+import { UserProvider } from "./UserContext"; // Import the UserProvider
 
 function Checkout() {
   const { uid } = useUser();
@@ -26,6 +30,12 @@ function Checkout() {
   const [loading, setLoading] = useState(true); // To track loading state
   const [addr, setAddr] = useState([]);
   const [user, setUser] = useState({});
+  const [addAddr, setAddAddr] = useState(false);
+  const handleAddAddressClose = () => {
+    setAddAddr(false); // Close the AddAddress component
+    toast.success("Address added successfully!");
+    fetchDefAddr(); // Refresh the address list
+  };
 
   const location = useLocation();
   const cartVisited = location.state || false;
@@ -42,53 +52,71 @@ function Checkout() {
 
   const fetchDefAddr = useCallback(async () => {
     try {
-      // Reference the user's addresses subcollection
-      const userAddressesRef = collection(
-        doc(db, "users", userId),
-        "addresses"
-      );
-      const userAddressesSnapshot = await getDocs(userAddressesRef);
+      // Reference the user's document
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
 
-      if (userAddressesSnapshot.empty) {
-        console.log("No addresses found for this user.");
-        setAddr([]); // Ensure the address state is cleared
-        return;
-      }
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const addressIds = userData.addresses || []; // Get the array of address IDs
 
-      const addrList = [];
+        if (addressIds.length === 0) {
+          console.log("No addresses found for this user.");
+          setAddr([]); // Ensure the address state is cleared
+          return;
+        }
 
-      // Loop through each document in the user's addresses subcollection
-      for (const userAddrDoc of userAddressesSnapshot.docs) {
-        const { addr_id: addrId } = userAddrDoc.data();
-
-        if (addrId) {
-          // Fetch the address details from the main addresses collection
-          const addrDocRef = doc(db, "user_address", addrId);
+        // Fetch the address details for each address ID
+        const addrList = [];
+        for (const addrId of addressIds) {
+          const addrDocRef = doc(db, "addresses", addrId);
           const addrDocSnapshot = await getDoc(addrDocRef);
 
           if (addrDocSnapshot.exists()) {
             addrList.push({
-              addrId, // Address document ID from the main addresses collection
+              addrId, // Address document ID
               ...addrDocSnapshot.data(), // Address data
             });
           } else {
-            console.error(
-              `Address with ID ${addrId} does not exist in the "addresses" collection.`
-            );
+            console.error(`Address with ID ${addrId} does not exist.`);
           }
-        } else {
-          console.error("Address document does not have an addr_id field.");
         }
-      }
 
-      // Update the state with the fetched address list
-      setAddr(addrList);
+        setAddr(addrList);
+      } else {
+        console.error("User document does not exist.");
+      }
     } catch (error) {
       console.error("Error fetching user addresses:", error);
     }
   }, [userId]);
 
-  const fetchItems = useCallback( async () => {
+  const handleAddressChange = async (event) => {
+    const selectedAddrId = event.target.value; // Get the selected address ID
+    if (!selectedAddrId) return;
+
+    try {
+      // Update the user's default address in the users collection
+      const userDocRef = doc(db, "users", userId);
+      await updateDoc(userDocRef, {
+        def_addr: selectedAddrId, // Set the default address ID
+      });
+
+      // Update the user state to reflect the change
+      setUser((prevUser) => ({
+        ...prevUser,
+        def_addr: selectedAddrId, // Update the def_addr field in the user state
+      }));
+
+      // Optionally, show a success message or toast notification
+      toast.success("Default address updated successfully.");
+    } catch (error) {
+      console.error("Error updating default address:", error);
+      toast.error("Failed to update default address.");
+    }
+  };
+
+  const fetchItems = useCallback(async () => {
     try {
       setLoading(true); // Start loading
 
@@ -339,6 +367,13 @@ function Checkout() {
 
   return (
     <div className="checkout-container">
+      {addAddr && (
+        <UserProvider>
+          <ProtectedRoute>
+            <AddAddress onClose={handleAddAddressClose} />
+          </ProtectedRoute>
+        </UserProvider>
+      )}
       {loading && (
         <div className="loader">
           <img src="loading.gif" alt="loading" />
@@ -366,14 +401,23 @@ function Checkout() {
       <div className="select-address">
         <div className="box1">
           <div className="text">Select Address</div>
-          <button className="addAddress">Add New Address</button>
+          <button
+            className="addAddress-button"
+            onClick={() => setAddAddr(true)}
+          >
+            Add New Address
+          </button>
         </div>
 
         <div className="address-container">
-          <select id="Addresses">
+          <select
+            id="Addresses"
+            value={user.def_addr || ""} // Set the value to the user's default address ID
+            onChange={handleAddressChange} // Handle address change
+          >
             {addr.map((address) => (
-              <option key={address.addrId}>
-                {`${address.name}, ${address.door_no}, ${address.building_name}, ${address.area}, ${address.city} - ${address.zip_code}`}
+              <option key={address.addrId} value={address.addrId}>
+                {`${address.name}, ${address.door_no}, ${address.building_name}, ${address.area}, ${address.city} - ${address.zip}`}
               </option>
             ))}
           </select>
