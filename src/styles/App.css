@@ -1,5 +1,7 @@
 .App{
   margin-top: 50px;
+  min-height: calc(100vh - 50px);
+  background:linear-gradient(#f7f7f7,#f1f1f1);
 }
 .container{
   overflow: hidden;
@@ -57,7 +59,7 @@
   padding:0px 20px;
   left:5%;
   border: 1px solid #ececec;
-  border-radius: 18px;
+  border-radius: 5px;
   box-shadow: 0px 0px 2px 0px #7f7f7f;
   font-family: monospace;
   font-size: 20px;  
@@ -80,7 +82,7 @@
 .Header-search{
   position: relative;
   font-size: 25px;
-  left: -2.2%;
+  left: -1.5%;
   border-radius: 50%;
   z-index: 1000;
   display:flex;
@@ -92,8 +94,3 @@
   height: 25px;
   width: 25px;
 }
-
-.Home{
-  background-color: #ececec; 
-}
-

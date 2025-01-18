@@ -1,57 +1,55 @@
-import { doc, collection, query, where, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "../firebase-config";
-import {toast} from 'react-toastify';
+import { toast } from "react-toastify";
+
 
 export const decrementCartItem = async (userId, itemId, setItems) => {
-    try {
-      // Reference the parent document (user)
-      const userDocRef = doc(db, "users", userId);
+  try {
+    // Reference the specific cart item document
+    const cartDocRef = doc(db, `users/${userId}/cart`, itemId);
 
-      // Reference the cart subcollection
-      const cartCollectionRef = collection(userDocRef, "cart");
+    // Fetch the current data of the item
+    const docSnapshot = await getDoc(cartDocRef);
 
-      // Query to find the item in the cart
-      const q = query(cartCollectionRef, where("item_id", "==", itemId));
-      const querySnapshot = await getDocs(q);
+    if (docSnapshot.exists()) {
+      const currentData = docSnapshot.data();
 
-      if (!querySnapshot.empty) {
-        // If the item exists, decrement its quantity
-        querySnapshot.forEach(async (docSnapshot) => {
-          const existingDocRef = docSnapshot.ref;
-          const currentData = docSnapshot.data();
-          if (currentData.quantity <= 1) {
-            // If the quantity is already 1, delete the item
-            await deleteDoc(existingDocRef);
-            toast(`Deleted item from the cart.`);
+      if (currentData.quantity <= 1) {
+        // If the quantity is 1 or less, delete the item from the cart
+        await deleteDoc(cartDocRef);
+        toast(`Item removed from the cart.`);
 
-            // Update the state by removing the deleted item
-            setItems((prevItems) =>
-              prevItems.filter((item) => item.item_id !== itemId)
-            );
-          } else {
-            const newQuantity = currentData.quantity - 1; // Decrement quantity
-
-            await updateDoc(existingDocRef, { quantity: newQuantity });
-
-            console.log(`Decremented quantity of item ${itemId}.`);
-
-            // Update the state by removing the deleted item
-            setItems(
-              (prevItems) =>
-                prevItems
-                  .map((item) =>
-                    item.item_id === itemId
-                      ? { ...item, quantity: newQuantity > 0 ? newQuantity : 0 }
-                      : item
-                  )
-                  .filter((item) => item.quantity > 0) // Remove items with quantity 0
-            );
-          }
-        });
+        // Update the state by removing the item
+        setItems((prevItems) =>
+          prevItems.filter((item) => item.itemId !== itemId)
+        );
       } else {
-        console.log(`Item ${itemId} not found in the cart.`);
+        // Decrement the quantity
+        const newQuantity = currentData.quantity - 1;
+
+        // Update the quantity in Firestore
+        await updateDoc(cartDocRef, { quantity: newQuantity });
+        console.log(`Decreased quantity of item ${itemId}.`);
+
+        // Update the state
+        setItems((prevItems) =>
+          prevItems.map((item) =>
+            item.itemId === itemId ? { ...item, quantity: newQuantity } : item
+          )
+        );
       }
-    } catch (error) {
-      console.error("Error decrementing cart item:", error);
+    } else {
+      console.log(`Item ${itemId} not found in the cart.`);
     }
-  };
+  } catch (error) {
+    console.error("Error decrementing cart item:", error);
+    toast.error("Failed to decrement cart item.");
+  }
+};
+
+

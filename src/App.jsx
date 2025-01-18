@@ -12,6 +12,7 @@ import Cart from "./cart";
 import Checkout from "./checkout";
 import Favourites from "./favourites";
 import OrderPlaced from "./orderplaced";
+import Account from "./account";
 
 import "./styles/App.css";
 
@@ -76,6 +77,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <OrderPlaced />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/account"
+                  element={
+                    <ProtectedRoute>
+                      <Account />
                     </ProtectedRoute>
                   }
                 />

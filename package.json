@@ -17,7 +17,8 @@
     "react-router-dom": "^7.1.1",
     "react-scripts": "5.0.1",
     "react-toastify": "^11.0.2",
-    "reactjs-otp-input": "^2.0.10"
+    "reactjs-otp-input": "^2.0.10",
+    "babel-plugin-macros": "^3.1.0"
   },
   "scripts": {
     "start": "react-scripts start",

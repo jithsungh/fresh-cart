@@ -1,17 +1,10 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "./UserContext"; // Import the useUser hook
+import { Link} from "react-router-dom";
 import logo from "./fcn.png";
 
 const Navbar = () => {
-  const { logout } = useUser(); // Get logout function from context
-  const navigate = useNavigate(); // Hook to navigate programmatically
 
-  const handleLogout = () => {
-    logout(); // Call the logout function from UserContext
-    navigate("/login"); // Redirect to login page after logout
-  };
-
+  
   return (
     <header className="Header">
       <img src={logo} className="Header-logo" alt="logo" />
@@ -47,10 +40,11 @@ const Navbar = () => {
           <i className="bx bx-cart-alt"></i>
         </div>
       </Link>
-
-      <div className="Header-icon" id="account" onClick={handleLogout}>
-        <i className="bx bxs-user-circle"></i>
-      </div>
+      <Link to="/account">
+        <div className="Header-icon" id="account">
+          <i className="bx bxs-user-circle"></i>
+        </div>
+      </Link>
     </header>
   );
 };

@@ -28,44 +28,41 @@ function Cart() {
   const fetchItems = useCallback(async () => {
     try {
       setLoading(true); // Start loading
-
+  
       // Reference the user's cart subcollection
       const cartCollectionRef = collection(doc(db, "users", userId), "cart");
       const cartSnapshot = await getDocs(cartCollectionRef);
-
+  
       if (cartSnapshot.empty) {
         console.log("Cart is empty.");
         setItems([]);
         return;
       }
-
+  
       const itemsList = [];
-
-      // Fetch item details for each item in the cart
+  
+      // Fetch item details for each document in the cart
       for (const cartDoc of cartSnapshot.docs) {
-        const cartData = cartDoc.data();
-        const itemId = cartData.item_id;
-
-        if (itemId) {
-          const itemDocRef = doc(db, "items", itemId);
-          const itemDocSnapshot = await getDoc(itemDocRef);
-
-          if (itemDocSnapshot.exists()) {
-            itemsList.push({
-              cartId: cartDoc.id, // Cart document ID
-              ...cartData, // Data from the cart (e.g., quantity)
-              ...itemDocSnapshot.data(), // Data from the items collection
-            });
-          } else {
-            console.error(
-              `Item with ID ${itemId} does not exist in the "items" collection.`
-            );
-          }
+        const cartData = cartDoc.data(); // Contains fields like quantity
+        const itemId = cartDoc.id; // Document ID matches the itemId
+  
+        // Fetch the item details from the "items" collection
+        const itemDocRef = doc(db, "items", itemId);
+        const itemDocSnapshot = await getDoc(itemDocRef);
+  
+        if (itemDocSnapshot.exists()) {
+          itemsList.push({
+            cartId: itemId, // Cart document ID (same as itemId)
+            ...cartData, // Data from the cart (e.g., quantity)
+            ...itemDocSnapshot.data(), // Data from the items collection
+          });
         } else {
-          console.error("Cart item does not have an item_id field.");
+          console.error(
+            `Item with ID ${itemId} does not exist in the "items" collection.`
+          );
         }
       }
-
+  
       setItems(itemsList);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -73,7 +70,7 @@ function Cart() {
       setLoading(false); // End loading
     }
   }, [userId]);
-
+  
   // Fetch items on component mount
   useEffect(() => {
     fetchItems();
@@ -87,29 +84,20 @@ function Cart() {
   };
   const removeFromCart = async (userId, itemId, setItems) => {
     try {
-      // Reference the parent document (user)
-      const userDocRef = doc(db, "users", userId);
-
-      // Reference the cart subcollection
-      const cartCollectionRef = collection(userDocRef, "cart");
-
-      // Query to find the item in the cart
-      const q = query(cartCollectionRef, where("item_id", "==", itemId));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
+      // Reference the specific cart document (using itemId as the document ID)
+      const cartDocRef = doc(db, `users/${userId}/cart`, itemId);
+  
+      // Get the current cart item data
+      const cartDocSnapshot = await getDoc(cartDocRef);
+  
+      if (cartDocSnapshot.exists()) {
         // If the item exists, delete it
-        querySnapshot.forEach(async (docSnapshot) => {
-          const existingDocRef = docSnapshot.ref;
-          await deleteDoc(existingDocRef);
-
-          toast(`Deleted item from the cart.`);
-
-          // Update the state by removing the deleted item
-          setItems((prevItems) =>
-            prevItems.filter((item) => item.item_id !== itemId)
-          );
-        });
+        await deleteDoc(cartDocRef);
+  
+        toast(`Deleted item from the cart.`);
+  
+        // Update the state by removing the deleted item
+        setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
       } else {
         console.log(`Item ${itemId} not found in the cart.`);
       }
@@ -117,6 +105,7 @@ function Cart() {
       console.error("Error removing item from cart:", error);
     }
   };
+  
 
   const calculateTotalPrice = (items) => {
     if (!items || items.length === 0) {
@@ -189,17 +178,6 @@ function Cart() {
                 <img src="loading.gif" alt="loading" />
               </div>
             )}
-            <ToastContainer
-              position="center-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop={true}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
             {items.map((item) => (
               <div key={item.item_id} className="cart-item-card">
                 <div className="cart-images-container">

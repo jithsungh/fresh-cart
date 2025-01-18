@@ -28,8 +28,7 @@ function Home() {
         draggable
         pauseOnHover
       />
-
-      <h1>Welcome to Fresh Cart</h1>
+      <h1 className="home-1">Welcome to Fresh cart</h1>
     </div>
   );
 }

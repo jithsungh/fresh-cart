@@ -6,7 +6,9 @@ import {
   collection,
   query,
   where,
+  setDoc,
   getDocs,
+  getDoc,
   addDoc,
   updateDoc,
   deleteDoc,
@@ -39,7 +41,7 @@ function Shop() {
       setItems(itemsList);
     } catch (error) {
       console.error("Error fetching documents:", error);
-    }finally{
+    } finally {
       setLoading(false);
     }
   }, []);
@@ -47,13 +49,16 @@ function Shop() {
   // Fetch cart items
   const fetchCartItems = useCallback(async () => {
     try {
+      // Reference the cart subcollection
       const cartCollectionRef = collection(doc(db, "users", userId), "cart");
       const querySnapshot = await getDocs(cartCollectionRef);
-      const cartList = [];
-      querySnapshot.forEach((doc) => {
-        cartList.push({ id: doc.id, ...doc.data() });
-      });
-      setCartItems(cartList);
+
+      const cartList = querySnapshot.docs.map((doc) => ({
+        itemId: doc.id, // Use document ID as the item ID
+        ...doc.data(), // Include quantity and other fields
+      }));
+
+      setCartItems(cartList); // Update state with the fetched cart items
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -69,7 +74,7 @@ function Shop() {
       const querySnapshot = await getDocs(favouritesCollectionRef);
       const favouritesList = [];
       querySnapshot.forEach((doc) => {
-        favouritesList.push(doc.data().item_id); // Store only the item IDs
+        favouritesList.push(doc.id); // Store only the item IDs
       });
       setFavouritesItems(favouritesList);
     } catch (error) {
@@ -80,31 +85,27 @@ function Shop() {
   const addToFavourite = useCallback(
     async (userId, itemId) => {
       try {
-        const userDocRef = doc(db, "users", userId);
-        const favouritesCollectionRef = collection(userDocRef, "favourites");
+        // Reference the specific favourite item document
+        const favouritesDocRef = doc(db, `users/${userId}/favourites`, itemId);
 
-        const q = query(
-          favouritesCollectionRef,
-          where("item_id", "==", itemId)
-        );
-        const querySnapshot = await getDocs(q);
+        // Check if the item exists in favourites
+        const docSnapshot = await getDoc(favouritesDocRef);
 
-        if (!querySnapshot.empty) {
-          querySnapshot.forEach(async (docSnapshot) => {
-            const existingDocRef = docSnapshot.ref;
-            await deleteDoc(existingDocRef);
-            toast(`Item deleted from favourites.`);
-          });
+        if (docSnapshot.exists()) {
+          // If the item exists, delete it from favourites
+          await deleteDoc(favouritesDocRef);
+          toast(`Item removed from favourites.`);
         } else {
-          const orderData = {
-            item_id: itemId,
-          };
-          await addDoc(favouritesCollectionRef, orderData);
+          // If the item does not exist, add it to favourites
+          await setDoc(favouritesDocRef, { itemId });
           toast(`Item added to favourites.`);
         }
-        fetchFavouritesItems(); // Update favourites after change
+
+        // Fetch updated favourites list
+        fetchFavouritesItems();
       } catch (error) {
         console.error("Error adding or removing favourite:", error);
+        toast.error("Failed to update favourites.");
       }
     },
     [fetchFavouritesItems]
@@ -116,34 +117,36 @@ function Shop() {
 
   const handleDecrement = async (userId, itemId, setCartItems) => {
     decrementCartItem(userId, itemId, setCartItems);
+    fetchCartItems();
   };
-
-  const addToCart = async (userId, itemId) => {
-    const orderData = {
-      item_id: itemId,
+  // ADD TO CART
+  const addToCart = async (userId, itemId, setCartItems) => {
+    const itemData = {
       quantity: 1, // Default quantity
     };
 
     try {
-      const userDocRef = doc(db, "users", userId);
-      const cartCollectionRef = collection(userDocRef, "cart");
-      const q = query(cartCollectionRef, where("item_id", "==", itemId));
-      const querySnapshot = await getDocs(q);
+      // Reference the user's cart collection
+      const cartDocRef = doc(db, `users/${userId}/cart`, itemId); // Use itemId as the document ID
 
-      if (!querySnapshot.empty) {
-        const docSnapshot = querySnapshot.docs[0];
-        const existingDocRef = docSnapshot.ref;
-        const currentData = docSnapshot.data();
-        const newQuantity = (currentData.quantity || 0) + 1;
+      // Check if the item already exists in the cart
+      const docSnapshot = await getDoc(cartDocRef);
 
-        await updateDoc(existingDocRef, { quantity: newQuantity });
-      } else {
-        await addDoc(cartCollectionRef, orderData);
-        toast(`Added new item to cart.`);
+      if (!docSnapshot.exists()) {
+        // Item does not exist, create a new document
+        await setDoc(cartDocRef, itemData);
+
+        // Update the cartItems state directly
+        setCartItems((prevCartItems) => [
+          ...prevCartItems,
+          { itemId, ...itemData },
+        ]);
+
+        toast.success(`Added new item ${itemId} to cart.`);
       }
-      fetchCartItems(); // Update cart items
     } catch (error) {
       console.error("Error adding or updating item:", error);
+      toast.error("Failed to add or update item in cart.");
     }
   };
 
@@ -162,9 +165,10 @@ function Shop() {
     <div className="shop-container">
       {loading && (
         <div className="loader">
-          <img src="loading.gif" alt="loading" />
+          <img src="loading.gif" alt="Loading..." />
         </div>
       )}
+
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -176,40 +180,49 @@ function Shop() {
         draggable
         pauseOnHover
       />
+
       {items.map((item) => {
         const isItemInCart = cartItems.some(
-          (cartItem) => cartItem.item_id === item.id
+          (cartItem) => cartItem.itemId === item.id
         );
         const isItemInFavourites = favouritesItems.includes(item.id);
         const cartItem = cartItems.find(
-          (cartItem) => cartItem.item_id === item.id
+          (cartItem) => cartItem.itemId === item.id
         );
 
         return (
           <div key={item.id} className="item-card">
+            {/* Image Section */}
             <div className="images-container">
               {item.images &&
-                item.images.map((image, index) =>
-                  image ? (
-                    <img
-                      key={index}
-                      src={image}
-                      alt={`${item.item_name} ${index}`}
-                      className="item-image"
-                    />
-                  ) : null
+                item.images.map(
+                  (image, index) =>
+                    image && (
+                      <img
+                        key={index}
+                        src={image}
+                        alt={`${item.item_name} ${index}`}
+                        className="item-image"
+                      />
+                    )
                 )}
             </div>
+
+            {/* Item Details */}
             <div className="item-details">
               <span className="name">{item.item_name}</span>
               <span className="description">{item.item_description}</span>
               <div className="price">
                 <span className="cost">
-                  ₹{parseFloat(item.price).toFixed(2)}
+                  <del>₹{parseInt(item.price + item.price * 0.25)}</del> ₹
+                  {parseInt(item.price)}
                 </span>
-                <span className="quantity">{item.grams} kg</span>
+                <span className="quantity">({item.grams} kg)</span>
               </div>
+
+              {/* Action Buttons */}
               <div className="item-buttons">
+                {/* Favourite Button */}
                 <button
                   className="favourite"
                   onClick={() => addToFavourite(userId, item.id)}
@@ -221,6 +234,7 @@ function Shop() {
                   ></i>
                 </button>
 
+                {/* Cart Buttons */}
                 {!isItemInCart ? (
                   <button
                     className="addtocart"

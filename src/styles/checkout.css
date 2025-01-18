@@ -5,7 +5,7 @@
   align-items: center;
   width: 1100px;
   padding: 30px 0px;
-  box-shadow: 0px 0px 5px 0px #7f7f7f;
+  box-shadow: 0px 0px 5px 0px #b5b5b5;
   .navigate-buttons {
     display: flex;
     justify-content: space-between;
@@ -15,9 +15,9 @@
     button {
       padding: 10px 20px;
       background: transparent;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: #fff;
-      box-shadow: 0px 0px 5px 0px #7f7f7f;
+      box-shadow: 0px 0px 5px 0px #b5b5b5;
       transition: all 0.1s ease-in-out;
       border: none;
       font-size: 20px;
@@ -40,19 +40,19 @@
     }
     .backtocart:active {
       opacity: 0.8;
-      box-shadow: 0 0 0 0 #7f7f7f;
+      box-shadow: 0 0 0 0 #b5b5b5;
     }
     .proceedtopayment:active {
       opacity: 0.8;
-      box-shadow: 0 0 0 0 #7f7f7f;
+      box-shadow: 0 0 0 0 #b5b5b5;
     }
   }
   .select-address {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 0 5px 0 #7f7f7f;
-    border-radius: 10px;
+    box-shadow: 0 0 5px 0 #b5b5b5;
+    border-radius: 5px;
     width: 1000px;
     margin: 20px 0px;
     padding: 10px;
@@ -76,10 +76,10 @@
       font-weight: bold;
       font-family: monospace;
       padding: 5px 10px;
-      border-radius: 5px;
+      border-radius: 3px;
       background-color: transparent;
       color: #003d76;
-      box-shadow: 0px 0px 3px 0px #7f7f7f;
+      box-shadow: 0px 0px 3px 0px #b5b5b5;
     }
     .addAddress:hover {
       background-color: #003d76;
@@ -87,13 +87,13 @@
     }
     .addAddress:active {
       opacity: 0.8;
-      box-shadow: 0 0 0 0 #7f7f7f;
+      box-shadow: 0 0 0 0 #b5b5b5;
     }
     .address-container {
       display: flex;
       flex-direction: column;
-      border-radius: 5px;
-      box-shadow: 0px 0px 3px 0px #7f7f7f;
+      border-radius: 3px;
+      box-shadow: 0px 0px 3px 0px #b5b5b5;
       margin: 10px 0px;
       #Addresses {
         text-align: left;
@@ -105,7 +105,7 @@
         width: 100%; /* Full width */
         padding: 10px; /* Add padding for better click area */
         border: none; /* Border color */
-        border-radius: 5px; /* Rounded corners */
+        border-radius: 3px; /* Rounded corners */
         background-color: #f9f9f9; /* Background color */
         color: #003d76; /* Text color */
         font-size: 16px; /* Font size */
@@ -142,8 +142,8 @@
     width: 1000px;
     padding: 10px;
     margin: 20px 0px;
-    box-shadow: 0 0 5px 0 #7f7f7f;
-    border-radius: 10px;
+    box-shadow: 0 0 5px 0 #b5b5b5;
+    border-radius: 5px;
     .text {
       align-self: left;
       margin: 0px 10px;
@@ -165,7 +165,7 @@
         .images-container img {
           height: 50px;
           width: 50px;
-          border-radius: 5px;
+          border-radius: 3px;
         }
         .item-details {
           display: flex;
@@ -212,14 +212,14 @@
               height: 50px;
               background: transparent;
               border: none;
-              box-shadow: 0px 0px 3px 0px #7f7f7f;
+              box-shadow: 0px 0px 3px 0px #b5b5b5;
             }
             .decrement-quantity {
-              border-radius: 5px 0px 0px 5px;
+              border-radius: 3px 0px 0px 3px;
               transition: all 0.2s ease-in-out;
             }
             .increment-quantity {
-              border-radius: 0px 5px 5px 0px;
+              border-radius: 0px 3px 3px 0px;
               transition: all 0.2s ease-in-out;
             }
             .decrement-quantity:hover,
@@ -229,7 +229,7 @@
             }
             .decrement-quantity:active,
             .increment-quantity:active {
-              box-shadow: 0px 0px 0px 0px #7f7f7f;
+              box-shadow: 0px 0px 0px 0px #b5b5b5;
               opacity: 0.8;
             }
             .quantity {
@@ -261,8 +261,8 @@
     width: 1000px;
     padding: 10px;
     margin: 20px 0px;
-    box-shadow: 0 0 5px 0 #7f7f7f;
-    border-radius: 10px;
+    box-shadow: 0 0 5px 0 #b5b5b5;
+    border-radius: 5px;
     .text {
       text-align: left;
       font-size: 25px;

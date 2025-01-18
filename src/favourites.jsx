@@ -7,8 +7,7 @@ import {
   query,
   where,
   getDocs,
-  addDoc,
-  updateDoc,
+  setDoc,
   getDoc,
   deleteDoc,
 } from "firebase/firestore";
@@ -51,8 +50,7 @@ function Favourites() {
 
       // Fetch item details for each item in the favourites
       for (const favouritesDoc of favouritesSnapshot.docs) {
-        const favouritesData = favouritesDoc.data();
-        const itemId = favouritesData.item_id;
+        const itemId = favouritesDoc.id;
 
         if (itemId) {
           console.log(`Fetching details for item ID: ${itemId}`);
@@ -63,7 +61,6 @@ function Favourites() {
             console.log(`Item found: ${itemDocSnapshot.id}`);
             itemsList.push({
               favouritesId: favouritesDoc.id, // Favourites document ID
-              ...favouritesData, // Data from the favourites
               ...itemDocSnapshot.data(), // Data from the items collection
             });
           } else {
@@ -88,13 +85,16 @@ function Favourites() {
 
   const fetchCartItems = useCallback(async () => {
     try {
+      // Reference the cart subcollection
       const cartCollectionRef = collection(doc(db, "users", userId), "cart");
       const querySnapshot = await getDocs(cartCollectionRef);
-      const cartList = [];
-      querySnapshot.forEach((doc) => {
-        cartList.push({ id: doc.id, ...doc.data() });
-      });
-      setCartItems(cartList);
+
+      const cartList = querySnapshot.docs.map((doc) => ({
+        itemId: doc.id, // Use document ID as the item ID
+        ...doc.data(), // Include quantity and other fields
+      }));
+
+      setCartItems(cartList); // Update state with the fetched cart items
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
@@ -106,54 +106,48 @@ function Favourites() {
     fetchCartItems();
   }, [fetchItems, fetchCartItems]);
 
-  const addToCart = async (userId, itemId) => {
-    const orderData = {
-      item_id: itemId,
+  const addToCart = async (userId, itemId, setCartItems) => {
+    const itemData = {
       quantity: 1, // Default quantity
     };
 
     try {
-      const userDocRef = doc(db, "users", userId);
-      const cartCollectionRef = collection(userDocRef, "cart");
-      const q = query(cartCollectionRef, where("item_id", "==", itemId));
-      const querySnapshot = await getDocs(q);
+      // Reference the user's cart collection
+      const cartDocRef = doc(db, `users/${userId}/cart`, itemId); // Use itemId as the document ID
 
-      if (!querySnapshot.empty) {
-        const docSnapshot = querySnapshot.docs[0];
-        const existingDocRef = docSnapshot.ref;
-        const currentData = docSnapshot.data();
-        const newQuantity = (currentData.quantity || 0) + 1;
+      // Check if the item already exists in the cart
+      const docSnapshot = await getDoc(cartDocRef);
 
-        await updateDoc(existingDocRef, { quantity: newQuantity });
-        console.log(`Updated item ${itemId} with new quantity: ${newQuantity}`);
-      } else {
-        await addDoc(cartCollectionRef, orderData);
-        toast(`Added new item to cart.`);
+      if (!docSnapshot.exists()) {
+        // Item does not exist, create a new document
+        await setDoc(cartDocRef, itemData);
+
+        // Update the cartItems state directly
+        setCartItems((prevCartItems) => [
+          ...prevCartItems,
+          { itemId, ...itemData },
+        ]);
+
+        toast.success(`Added new item ${itemId} to cart.`);
       }
-      fetchCartItems(); // Update cart items
     } catch (error) {
       console.error("Error adding or updating item:", error);
+      toast.error("Failed to add or update item in cart.");
     }
   };
-
   const removeFromFavorites = async (userId, itemId, setItems) => {
     try {
-      const userDocRef = doc(db, "users", userId);
-      const favouritesCollectionRef = collection(userDocRef, "favourites");
-      const q = query(favouritesCollectionRef, where("item_id", "==", itemId));
-      const querySnapshot = await getDocs(q);
+      const favouritesDocRef = doc(db, `users/${userId}/favourites`, itemId);
 
-      if (!querySnapshot.empty) {
-        const deletePromises = querySnapshot.docs.map((docSnapshot) => {
+      const querySnapshot = await getDocs(favouritesDocRef);
+
+      if (querySnapshot.exists()) {
+        querySnapshot.forEach(async (docSnapshot) => {
           const existingDocRef = docSnapshot.ref;
-          return deleteDoc(existingDocRef);
+          await deleteDoc(existingDocRef);
+          toast(`Item deleted from favourites.`);
         });
-
-        await Promise.all(deletePromises);
-        toast(`Item removed from favourites.`);
-        setItems((prevItems) =>
-          prevItems.filter((item) => item.item_id !== itemId)
-        );
+        setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
       } else {
         console.log(`Item ${itemId} not found in favourites.`);
       }
@@ -172,6 +166,7 @@ function Favourites() {
   const handleIncrement = (userId, itemId, setCartItems) => {
     incrementCartItem(userId, itemId, setCartItems);
   };
+
   const handleDecrement = async (userId, itemId, setCartItems) => {
     decrementCartItem(userId, itemId, setCartItems);
   };
@@ -196,10 +191,10 @@ function Favourites() {
       />
       {items.map((item) => {
         const isItemInCart = cartItems.some(
-          (cartItem) => cartItem.item_id === item.item_id
+          (cartItem) => cartItem.itemId === item.item_id
         );
         const cartItem = cartItems.find(
-          (cartItem) => cartItem.item_id === item.item_id
+          (cartItem) => cartItem.itemId === item.item_id
         );
 
         return (
@@ -223,7 +218,8 @@ function Favourites() {
 
               <div className="price">
                 <span className="cost">
-                  ₹{parseFloat(item.price).toFixed(2)}
+                  <del>₹{parseInt(item.price + item.price * 0.25)}</del> ₹
+                  {parseInt(item.price)}
                 </span>
                 <span className="quantity">{item.grams} kg</span>
                 {/*<span className="per-gram">
