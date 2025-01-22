@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { incrementCartItem } from "./functions/incrementCartItem";
 import { decrementCartItem } from "./functions/decrementCartItem";
 import {
@@ -17,6 +17,7 @@ import { db } from "./firebase-config";
 import "./styles/shop.css";
 import { useUser } from "./UserContext"; // Import UserContext
 import { ToastContainer, toast } from "react-toastify";
+import PoAddToList from "./poAddToList";
 import "react-toastify/dist/ReactToastify.css";
 
 function Shop() {
@@ -28,7 +29,11 @@ function Shop() {
   const [cartItems, setCartItems] = useState([]);
   const [favouritesItems, setFavouritesItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [addToList, setAddToList] = useState(false);
 
+  const [popupStyle, setPopupStyle] = useState({});
+  const [selectedItemId, setSelectedItemId] = useState(null); // Track selected item ID
+  const buttonRefs = useRef({});
   // Fetch items from Firestore
   const fetchItems = useCallback(async () => {
     try {
@@ -117,10 +122,9 @@ function Shop() {
 
   const handleDecrement = async (userId, itemId, setCartItems) => {
     decrementCartItem(userId, itemId, setCartItems);
-    fetchCartItems();
   };
   // ADD TO CART
-  const addToCart = async (userId, itemId, setCartItems) => {
+  const addToCart = async (userId, itemId) => {
     const itemData = {
       quantity: 1, // Default quantity
     };
@@ -136,11 +140,7 @@ function Shop() {
         // Item does not exist, create a new document
         await setDoc(cartDocRef, itemData);
 
-        // Update the cartItems state directly
-        setCartItems((prevCartItems) => [
-          ...prevCartItems,
-          { itemId, ...itemData },
-        ]);
+        fetchCartItems();
 
         toast.success(`Added new item ${itemId} to cart.`);
       }
@@ -159,7 +159,23 @@ function Shop() {
     }
   }, [fetchCartItems, fetchFavouritesItems, fetchItems, userId]);
 
-  // Return early if no user is logged in
+  const showPopup = (itemId) => {
+    const button = buttonRefs.current[itemId];
+    if (button) {
+      const rect = button.getBoundingClientRect();
+      // Calculate popup position relative to the viewport
+      const style = {
+        top: rect.bottom + window.scrollY + 10 + "px", // 10px below the button
+        left: rect.left + window.scrollX - 150 + "px", // Align with the left edge of the button
+      };
+      setPopupStyle(style); // Update the popup position
+      setSelectedItemId(itemId);
+      setAddToList(true); // Show the popup
+    }
+  };
+  const hidePopup = () => {
+    setAddToList(false); // Hide the popup
+  };
 
   return (
     <div className="shop-container">
@@ -168,7 +184,21 @@ function Shop() {
           <img src="loading.gif" alt="Loading..." />
         </div>
       )}
-
+      {addToList && (
+        <div
+          id="popup"
+          style={{
+            position: "absolute",
+            ...popupStyle, // Apply calculated position
+            backgroundColor: "#fff",
+            padding: "5px",
+            borderRadius: "50%",
+            zIndex: 1000000,
+          }}
+        >
+          <PoAddToList onClose={hidePopup} itemId={selectedItemId} />
+        </div>
+      )}
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -180,7 +210,6 @@ function Shop() {
         draggable
         pauseOnHover
       />
-
       {items.map((item) => {
         const isItemInCart = cartItems.some(
           (cartItem) => cartItem.itemId === item.id
@@ -194,18 +223,27 @@ function Shop() {
           <div key={item.id} className="item-card">
             {/* Image Section */}
             <div className="images-container">
-              {item.images &&
-                item.images.map(
-                  (image, index) =>
-                    image && (
-                      <img
-                        key={index}
-                        src={image}
-                        alt={`${item.item_name} ${index}`}
-                        className="item-image"
-                      />
-                    )
-                )}
+              <div className="image-wrapper">
+                <i
+                  id="plus-button"
+                  className="bx bxs-bookmark-alt-plus"
+                  title="Add to List"
+                  ref={(el) => (buttonRefs.current[item.id] = el)} // Assign dynamic ref
+                  onClick={() => showPopup(item.id)}
+                ></i>
+                {item.images &&
+                  item.images.map(
+                    (image, index) =>
+                      image && (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`${item.item_name} ${index}`}
+                          className="item-image"
+                        />
+                      )
+                  )}
+              </div>
             </div>
 
             {/* Item Details */}
@@ -225,6 +263,7 @@ function Shop() {
                 {/* Favourite Button */}
                 <button
                   className="favourite"
+                  title="Add to Favourites"
                   onClick={() => addToFavourite(userId, item.id)}
                 >
                   <i

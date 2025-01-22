@@ -123,10 +123,7 @@ function Favourites() {
         await setDoc(cartDocRef, itemData);
 
         // Update the cartItems state directly
-        setCartItems((prevCartItems) => [
-          ...prevCartItems,
-          { itemId, ...itemData },
-        ]);
+        fetchCartItems();
 
         toast.success(`Added new item ${itemId} to cart.`);
       }
@@ -139,15 +136,15 @@ function Favourites() {
     try {
       const favouritesDocRef = doc(db, `users/${userId}/favourites`, itemId);
 
-      const querySnapshot = await getDocs(favouritesDocRef);
+      const docSnapshot = await getDoc(favouritesDocRef);
 
-      if (querySnapshot.exists()) {
-        querySnapshot.forEach(async (docSnapshot) => {
-          const existingDocRef = docSnapshot.ref;
-          await deleteDoc(existingDocRef);
-          toast(`Item deleted from favourites.`);
-        });
-        setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+      if (docSnapshot.exists()) {
+        // If the item exists, delete it from favourites
+        await deleteDoc(favouritesDocRef);
+        toast(`Item removed from favourites.`);
+        
+        // Update the items state directly
+        setItems((prevItems) => prevItems.filter((item) => item.favouritesId !== itemId));
       } else {
         console.log(`Item ${itemId} not found in favourites.`);
       }

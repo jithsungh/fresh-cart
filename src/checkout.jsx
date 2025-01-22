@@ -2,8 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import React from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
-import { incrementCartItem } from "./functions/incrementCartItem";
-import { decrementCartItem } from "./functions/decrementCartItem";
 import {
   doc,
   collection,
@@ -26,23 +24,26 @@ function Checkout() {
 
   const navigate = useNavigate();
   const shippingCost = 210;
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true); // To track loading state
+  const [loading, setLoading] = useState(false); // To track loading state
   const [addr, setAddr] = useState([]);
   const [user, setUser] = useState({});
   const [addAddr, setAddAddr] = useState(false);
+
+  const location = useLocation();
+  const { checkoutItems, visited, backPath } = location.state || {};
+  const [items, setItems] = useState(checkoutItems || []);
+
+  // Handle case where state is undefined
+
   const handleAddAddressClose = () => {
     setAddAddr(false); // Close the AddAddress component
     toast.success("Address added successfully!");
     fetchDefAddr(); // Refresh the address list
   };
 
-  const location = useLocation();
-  const cartVisited = location.state || false;
-
   useEffect(() => {
-    if (!cartVisited) {
-      navigate("/cart");
+    if (!visited) {
+      navigate("/home");
     }
   });
 
@@ -52,6 +53,7 @@ function Checkout() {
 
   const fetchDefAddr = useCallback(async () => {
     try {
+      setLoading(true);
       // Reference the user's document
       const userDocRef = doc(db, "users", userId);
       const userDoc = await getDoc(userDocRef);
@@ -89,6 +91,9 @@ function Checkout() {
     } catch (error) {
       console.error("Error fetching user addresses:", error);
     }
+    finally {
+      setLoading(false);
+    }
   }, [userId]);
 
   const handleAddressChange = async (event) => {
@@ -116,56 +121,6 @@ function Checkout() {
     }
   };
 
-  const fetchItems = useCallback(async () => {
-    try {
-      setLoading(true); // Start loading
-
-      // Reference the user's cart subcollection
-      const cartCollectionRef = collection(doc(db, "users", userId), "cart");
-      const cartSnapshot = await getDocs(cartCollectionRef);
-
-      if (cartSnapshot.empty) {
-        console.log("Cart is empty.");
-        setItems([]);
-        return;
-      }
-
-      const itemsList = [];
-
-      // Fetch item details for each item in the cart
-      for (const cartDoc of cartSnapshot.docs) {
-        const cartData = cartDoc.data();
-        const itemId = cartData.item_id;
-
-        if (itemId) {
-          const itemDocRef = doc(db, "items", itemId);
-          const itemDocSnapshot = await getDoc(itemDocRef);
-
-          if (itemDocSnapshot.exists()) {
-            itemsList.push({
-              cartId: cartDoc.id, // Cart document ID
-              ...cartData, // Data from the cart (e.g., quantity)
-              ...itemDocSnapshot.data(), // Data from the items collection
-            });
-          } else {
-            console.error(
-              `Item with ID ${itemId} does not exist in the "items" collection.`
-            );
-          }
-        } else {
-          console.error("Cart item does not have an item_id field.");
-        }
-      }
-
-      setItems(itemsList);
-      console.log(itemsList);
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-    } finally {
-      setLoading(false); // End loading
-    }
-  }, [userId]);
-
   const fetchUserDetails = useCallback(async () => {
     try {
       const userDocRef = doc(db, "users", userId);
@@ -182,18 +137,33 @@ function Checkout() {
     }
   }, [userId]);
 
-  const handleIncrement = (userId, itemId, setItems) => {
-    incrementCartItem(userId, itemId, setItems);
+  const handleIncrement = (userId, itemId) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.itemId === itemId
+          ? { ...item, quantity: item.quantity + 1 } // Increment quantity by 1
+          : item
+      )
+    );
   };
-  const handleDecrement = async (userId, itemId, setItems) => {
-    decrementCartItem(userId, itemId, setItems);
+
+  const handleDecrement = (userId, itemId) => {
+    setItems(
+      (prevItems) =>
+        prevItems
+          .map((item) =>
+            item.itemId === itemId
+              ? { ...item, quantity: item.quantity - 1 } // Decrement quantity by 1
+              : item
+          )
+          .filter((item) => item.quantity > 0) // Remove items with quantity 0
+    );
   };
 
   // Fetch items on component mount
   useEffect(() => {
-    fetchItems();
     fetchDefAddr();
-  }, [fetchItems, fetchDefAddr]);
+  }, [fetchDefAddr]);
   useEffect(() => {
     fetchUserDetails();
   }, [fetchUserDetails]);
@@ -324,10 +294,10 @@ function Checkout() {
         const paymentId = response.razorpay_payment_id;
         // store in firebase
         const orderInfo = {
-          ordered_items: items.map((item) => ({
-            item_id: item.item_id,
-            quantity: item.quantity,
-          })),
+          ordered_items: items.reduce((acc, item) => {
+            acc[item.itemId] = { quantity: item.quantity }; // Store each itemId as a key and its quantity as an object
+            return acc;
+          }, {}),
           addr_id: user.def_addr,
           name,
           mobile: phoneNumber,
@@ -346,7 +316,10 @@ function Checkout() {
             orderInfo
           );
           console.log("order placed successfully: ", result.id);
-          await emptyCart();
+          if (backPath === "/cart") {
+            await emptyCart();
+          }
+
           await handleOrderPlaced(result.id);
         } catch (error) {
           console.log(error);
@@ -364,6 +337,11 @@ function Checkout() {
     pay.open();
     console.log(pay);
   };
+  if (!items) {
+    console.error("No items found in state. Redirecting to cart.");
+    navigate(backPath || "/cart"); // Redirect to cart if items are not available
+    return null; // Prevent rendering
+  }
 
   return (
     <div className="checkout-container">
@@ -391,8 +369,11 @@ function Checkout() {
         pauseOnHover
       />
       <div className="navigate-buttons">
-        <button className="backtocart" onClick={() => navigate("/cart")}>
-          Back to Cart
+        <button
+          className="backtocart"
+          onClick={() => navigate(backPath || "/cart")}
+        >
+          Back
         </button>
         <button className="proceedtopayment" onClick={handleProceedToPayment}>
           Proceed to Payment
@@ -409,7 +390,7 @@ function Checkout() {
           </button>
         </div>
 
-        <div className="address-container">
+        <div className="address-container-checkout">
           <select
             id="Addresses"
             value={user.def_addr || ""} // Set the value to the user's default address ID
@@ -428,7 +409,7 @@ function Checkout() {
 
         <div className="review-container">
           {items.map((item) => (
-            <div key={item.cartId} className="review-item">
+            <div key={item.itemId} className="review-item">
               <div className="images-container">
                 {item.images &&
                   item.images.map((image, index) =>
@@ -454,18 +435,14 @@ function Checkout() {
                 <div className="edit-cart">
                   <button
                     className="decrement-quantity"
-                    onClick={() =>
-                      handleDecrement(userId, item.item_id, setItems)
-                    }
+                    onClick={() => handleDecrement(userId, item.item_id)}
                   >
                     -
                   </button>
                   <div className="quantity">{item.quantity}</div>
                   <button
                     className="increment-quantity"
-                    onClick={() =>
-                      handleIncrement(userId, item.item_id, setItems)
-                    }
+                    onClick={() => handleIncrement(userId, item.item_id)}
                   >
                     +
                   </button>
@@ -499,8 +476,8 @@ function Checkout() {
         </div>
       </div>
       <div className="navigate-buttons">
-        <button className="backtocart" onClick={() => navigate("/cart")}>
-          Back to Cart
+        <button className="backtocart" onClick={() => navigate(backPath || "/cart")}>
+          Back
         </button>
         <button className="proceedtopayment" onClick={handleProceedToPayment}>
           Proceed to Payment

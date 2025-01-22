@@ -1,5 +1,5 @@
-import { doc, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion } from "firebase/firestore";
-import { db } from "../firebaseConfig"; // Adjust the path to your Firebase configuration
+import { doc, getDoc, setDoc, deleteDoc, updateDoc, arrayUnion, collection, addDoc } from "firebase/firestore";
+import { db } from "../firebase-config"; // Adjust the path to your Firebase configuration
 import { toast } from "react-toastify";
  
 // DELETE AN ADDRESS

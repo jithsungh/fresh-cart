@@ -9,10 +9,11 @@ import Home from "./home"; // Home is now public
 import Shop from "./shop";
 import Orders from "./orders";
 import Cart from "./cart";
-import Checkout from "./checkout";
 import Favourites from "./favourites";
 import OrderPlaced from "./orderplaced";
+import Checkout from "./checkout";
 import Account from "./account";
+import Lists from "./lists";
 
 import "./styles/App.css";
 
@@ -48,19 +49,19 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route 
+                  path="/lists"
+                  element={
+                    <ProtectedRoute>
+                      <Lists />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/cart"
                   element={
                     <ProtectedRoute>
                       <Cart />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/checkout"
-                  element={
-                    <ProtectedRoute>
-                      <Checkout />
                     </ProtectedRoute>
                   }
                 />
@@ -78,6 +79,14 @@ function App() {
                     <ProtectedRoute>
                       <OrderPlaced />
                     </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/checkout"
+                  element={
+                    <ProtectedRoute>
+                      <Checkout />
+                    </ProtectedRoute>   
                   }
                 />
                 <Route

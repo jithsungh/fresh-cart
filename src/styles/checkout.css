@@ -53,8 +53,8 @@
     justify-content: space-between;
     box-shadow: 0 0 5px 0 #b5b5b5;
     border-radius: 5px;
-    width: 1000px;
     margin: 20px 0px;
+    width:1000px;
     padding: 10px;
     .box1 {
       display: flex;
@@ -89,7 +89,7 @@
       opacity: 0.8;
       box-shadow: 0 0 0 0 #b5b5b5;
     }
-    .address-container {
+    .address-container-checkout {
       display: flex;
       flex-direction: column;
       border-radius: 3px;
@@ -102,7 +102,6 @@
         font-family: monospace;
       }
       select {
-        width: 100%; /* Full width */
         padding: 10px; /* Add padding for better click area */
         border: none; /* Border color */
         border-radius: 3px; /* Rounded corners */

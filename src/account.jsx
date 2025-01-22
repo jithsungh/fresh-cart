@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./styles/account.css";
 import { useUser } from "./UserContext";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "./profile";
+import Address from "./address";
 import Orders from "./orders";
+import Lists from "./lists";
+import CustomerCare from "./customerCare";
+
 const Account = () => {
   const { user } = useUser();
   const [activeTab, setActiveTab] = useState("profile");
@@ -64,9 +68,9 @@ const Account = () => {
   };
 
   useEffect(() => {
-    changeBackground("profile");
+    changeBackground(activeTab);
   }, []);
-
+  
   return (
     <div className="account">
       <ToastContainer
@@ -97,10 +101,10 @@ const Account = () => {
       </div>
       <div className="account-container">
         {activeTab === "profile" && <Profile />}
-        {activeTab === "my-addresses" && <div>My Addresses Content</div>}
-        {activeTab === "my-orders" && <div>My Orders Content</div>}
-        {activeTab === "my-lists" && <div>My Lists Content</div>}
-        {activeTab === "customercare" && <div>Customer Care Content</div>}
+        {activeTab === "my-addresses" && <Address />}
+        {activeTab === "my-orders" && <div className="order--container"><Orders /></div>}
+        {activeTab === "my-lists" && <Lists />}
+        {activeTab === "customercare" && <CustomerCare />}
       </div>
     </div>
   );

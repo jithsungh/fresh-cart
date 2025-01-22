@@ -4,8 +4,6 @@ import { decrementCartItem } from "./functions/decrementCartItem";
 import {
   doc,
   collection,
-  query,
-  where,
   getDocs,
   getDoc,
   deleteDoc,
@@ -21,38 +19,37 @@ function Cart() {
   const userId = uid;
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true); // To track loading state
-  const [cartVisited, setCartVisited] = useState(false);
   const navigate = useNavigate();
 
   // Fetch items from Firestore
   const fetchItems = useCallback(async () => {
     try {
       setLoading(true); // Start loading
-  
+
       // Reference the user's cart subcollection
       const cartCollectionRef = collection(doc(db, "users", userId), "cart");
       const cartSnapshot = await getDocs(cartCollectionRef);
-  
+
       if (cartSnapshot.empty) {
         console.log("Cart is empty.");
         setItems([]);
         return;
       }
-  
+
       const itemsList = [];
-  
+
       // Fetch item details for each document in the cart
       for (const cartDoc of cartSnapshot.docs) {
         const cartData = cartDoc.data(); // Contains fields like quantity
         const itemId = cartDoc.id; // Document ID matches the itemId
-  
+
         // Fetch the item details from the "items" collection
         const itemDocRef = doc(db, "items", itemId);
         const itemDocSnapshot = await getDoc(itemDocRef);
-  
+
         if (itemDocSnapshot.exists()) {
           itemsList.push({
-            cartId: itemId, // Cart document ID (same as itemId)
+            itemId, // Cart document ID (same as itemId)
             ...cartData, // Data from the cart (e.g., quantity)
             ...itemDocSnapshot.data(), // Data from the items collection
           });
@@ -62,7 +59,7 @@ function Cart() {
           );
         }
       }
-  
+
       setItems(itemsList);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -70,7 +67,7 @@ function Cart() {
       setLoading(false); // End loading
     }
   }, [userId]);
-  
+
   // Fetch items on component mount
   useEffect(() => {
     fetchItems();
@@ -86,18 +83,20 @@ function Cart() {
     try {
       // Reference the specific cart document (using itemId as the document ID)
       const cartDocRef = doc(db, `users/${userId}/cart`, itemId);
-  
+
       // Get the current cart item data
       const cartDocSnapshot = await getDoc(cartDocRef);
-  
+
       if (cartDocSnapshot.exists()) {
         // If the item exists, delete it
         await deleteDoc(cartDocRef);
-  
+
         toast(`Deleted item from the cart.`);
-  
+
         // Update the state by removing the deleted item
-        setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+        setItems((prevItems) =>
+          prevItems.filter((item) => item.itemId !== itemId)
+        );
       } else {
         console.log(`Item ${itemId} not found in the cart.`);
       }
@@ -105,7 +104,6 @@ function Cart() {
       console.error("Error removing item from cart:", error);
     }
   };
-  
 
   const calculateTotalPrice = (items) => {
     if (!items || items.length === 0) {
@@ -123,8 +121,10 @@ function Cart() {
     if (Object.keys(items).length === 0) {
       navigate("/cart"); // Redirect to cart page if empty
     } else {
-      setCartVisited(true);
-      navigate("/checkout", { state: { cartVisited } });
+      console.log("cart items: ", items);
+      navigate("/checkout", {
+        state: { checkoutItems: items, visited: true, backPath: "/cart" }, // Only pass serializable data
+      });
     }
   };
   if (loading) {
@@ -134,6 +134,7 @@ function Cart() {
       </div>
     );
   }
+
   return (
     <>
       <ToastContainer
@@ -216,7 +217,7 @@ function Cart() {
                     <button
                       className="decrement-quantity"
                       onClick={() =>
-                        handleDecrement(userId, item.item_id, setItems)
+                        handleDecrement(userId, item.itemId, setItems)
                       }
                     >
                       -
@@ -225,7 +226,7 @@ function Cart() {
                     <button
                       className="increment-quantity"
                       onClick={() =>
-                        handleIncrement(userId, item.item_id, setItems)
+                        handleIncrement(userId, item.itemId, setItems)
                       }
                     >
                       +
@@ -234,7 +235,7 @@ function Cart() {
                   <button
                     className="delete"
                     onClick={() =>
-                      removeFromCart(userId, item.item_id, setItems)
+                      removeFromCart(userId, item.itemId, setItems)
                     }
                   >
                     <i className="bx bx-trash"></i>

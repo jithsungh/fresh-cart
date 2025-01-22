@@ -29,19 +29,24 @@ const Navbar = () => {
           <button className="Header-button">Orders</button>
         </Link>
       </div>
+      <Link to="/lists">
+        <div className="Header-icon" id="lists" title="Lists">
+          <i className="bx bxs-receipt"></i>
+        </div>
+      </Link>
       <Link to="/favourites">
-        <div className="Header-icon" id="wishlist" aria-label="Wishlist">
+        <div className="Header-icon" id="wishlist" title="Wishlist" aria-label="Wishlist">
           <i className="bx bx-heart"></i>
         </div>
       </Link>
 
       <Link to="/cart">
-        <div className="Header-icon" id="cart">
+        <div className="Header-icon" id="cart" title="Cart">
           <i className="bx bx-cart-alt"></i>
         </div>
       </Link>
       <Link to="/account">
-        <div className="Header-icon" id="account">
+        <div className="Header-icon" id="account" title="Account">
           <i className="bx bxs-user-circle"></i>
         </div>
       </Link>

@@ -2,6 +2,33 @@
   padding: 20px;
   width: 50%;
 }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .box1 {
+    h3 {
+      font-size: 16px;
+      color: #000000;
+      i {
+        font-size: 18px;
+        color: #28a745;
+      }
+    }
+  }
+
+  .buttons {
+    padding: 0px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    gap: 10px;
+    Button {
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+  }
+}
 
 .order-card {
   border: 1px solid #ccc;
@@ -9,7 +36,7 @@
   padding: 20px;
   margin-bottom: 20px;
   background-color: #fff;
-  box-shadow:0px 0px 3px 0px #b5b5b5;
+  box-shadow: 0px 0px 3px 0px #b5b5b5;
 }
 
 .order-card h3 {
@@ -19,7 +46,7 @@
 }
 
 .order-card p {
-  margin: 10px 0;
+  margin: 5px 0;
 }
 
 .order-table,
@@ -43,4 +70,49 @@
 
 .spacer {
   margin: 15px 0;
+}
+.popup-overlay{
+  position: absolute;
+  top:280px;
+  right:200px;
+}
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px #b5b5b5;
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 7px;
+
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 10px 0px;
+    }
+    #close {
+      cursor: pointer;
+      font-size: 28px;
+      color: red;
+      padding: 0px 2px;
+      border-radius: 0 5px 0 0;
+    }
+    #close:hover {
+      background-color: red;
+      color: #fff;
+    }
+  }
+  .new-list-order {
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background-color: #fff;
+  }
 }

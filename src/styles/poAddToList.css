@@ -1,0 +1,106 @@
+.poAddToListContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  min-height: 200px;
+  max-height: 300px;
+  padding: 0px;
+  margin: 20px 0px;
+  box-shadow: 0 0 5px 0 #4f4f4f;
+  background-color: #fff;
+  border-radius: 5px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 7px;
+
+    .title {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 10px 0px;
+    }
+    #close {
+      cursor: pointer;
+      font-size: 28px;
+      color: red;
+      padding: 0px 2px;
+      border-radius: 0 5px 0 0;
+    }
+    #close:hover {
+      background-color: red;
+      color: #fff;
+    }
+  }
+  .body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding:5px;
+    .new-list {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      align-items: center;
+      gap: 5px;
+      margin: 2px 0px;
+    }
+    .lists {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 200px;
+      overflow: auto;
+      .list {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .add {
+        font-size: 14px;
+        height: 20px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.lists::-webkit-scrollbar {
+  display: none;
+}
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  button {
+    background-color: rgba(0, 95, 190, 0.964);
+    border: none;
+    height: 30px;
+    width: 30px;
+    margin: 0px 1px;
+    color: #fff;
+    font-size: 20px;
+  }
+  .decrement-button{
+    border-radius: 3px 0px 0px 3px;
+  }
+  .increment-button{
+    border-radius: 0px 3px 3px 0px;
+  }
+  .decrement-button:hover{
+    background-color: #f33434;
+  }
+  .increment-button:hover{
+    background-color: #28a745;
+  }
+  .decrement-button:active , .increment-button:active{
+    opacity: 0.8;
+  }
+
+}
