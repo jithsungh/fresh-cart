@@ -1,19 +1,18 @@
 import React from "react";
 import "./styles/home.css";
-import { useUser } from "./UserContext"; // Import the UserContext
-import { ToastContainer} from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Slideshow from "./slideshow";
+import RecentlyOrdered from "./recently-ordered";
+import Favourites from "./home-favourites";
 
 /**
  * Home component that renders the home page of the application.
- * Displays a welcome message to the user.
+ * Displays recently ordered and favorite items.
  */
 function Home() {
-  const { uid } = useUser(); // Access the user context
-
-  const userId = uid;
-  console.log(userId);
-
-  // Render home page content if userId is available
+  
+  
 
   return (
     <div className="Home">
@@ -28,7 +27,16 @@ function Home() {
         draggable
         pauseOnHover
       />
-      <h1 className="home-1">Welcome to Fresh cart</h1>
+      <Slideshow />
+      <div className="home-recently-ordered">
+        <h2>Recently Ordered</h2>
+        <RecentlyOrdered />
+      </div>
+      <div className="favourites-items">
+        <h2>Favourite Items</h2>
+        <Favourites />
+        
+      </div>
     </div>
   );
 }

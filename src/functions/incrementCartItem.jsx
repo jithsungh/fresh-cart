@@ -1,6 +1,5 @@
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase-config"; // Adjust the path as needed
-import { toast } from "react-toastify";
 
 export const incrementCartItem = async (userId, itemId, setItems) => {
   try {

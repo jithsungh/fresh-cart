@@ -4,8 +4,6 @@ import { decrementCartItem } from "./functions/decrementCartItem";
 import {
   doc,
   collection,
-  query,
-  where,
   getDocs,
   setDoc,
   getDoc,

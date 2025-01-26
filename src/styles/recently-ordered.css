@@ -1,0 +1,38 @@
+.recently-ordered {
+  display: flex;
+  align-items: center;
+}
+.recently-ordered-items {
+  display: flex;
+  overflow-x: scroll;
+}
+.prev,
+.next {
+  cursor: pointer;
+  height: 40px;
+  width: 20px;
+  background-color: #286ac0;
+  color: #fff;
+  font-size: 20px;
+  z-index: 1000000;
+}
+.prev {
+  position: relative;
+  left: 0;
+}
+.next {
+  position: relative;
+  right: 0;
+}
+.recently-ordered-items::-webkit-scrollbar {
+  height: 8px;
+}
+.recently-ordered-items::-webkit-scrollbar-track {
+  background: #fff; /* Light grey background */
+  border-radius: 10px; /* Rounded corners */
+}
+.recently-ordered-items::-webkit-scrollbar-thumb {
+    background: #b5b5b5; /* Dark grey handle */
+    border-radius: 10px; /* Rounded corners */
+    /* Space between handle and track */
+  }

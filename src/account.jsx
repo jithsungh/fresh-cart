@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import "./styles/account.css";
-import { useUser } from "./UserContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Profile from "./profile";
@@ -10,7 +9,6 @@ import Lists from "./lists";
 import CustomerCare from "./customerCare";
 
 const Account = () => {
-  const { user } = useUser();
   const [activeTab, setActiveTab] = useState("profile");
 
   const tabs = [
@@ -69,7 +67,7 @@ const Account = () => {
 
   useEffect(() => {
     changeBackground(activeTab);
-  }, []);
+  });
   
   return (
     <div className="account">

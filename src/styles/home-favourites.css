@@ -1,0 +1,21 @@
+.favourites-container {
+  display: flex;
+}
+
+.favourite-items {
+  display: flex;
+  overflow-x: scroll;
+}
+
+.favourite-items::-webkit-scrollbar {
+  height: 8px;
+}
+.favourite-items::-webkit-scrollbar-track {
+  background: #fff; /* Light grey background */
+  border-radius: 10px; /* Rounded corners */
+}
+.favourite-items::-webkit-scrollbar-thumb {
+  background: #b5b5b5; /* Dark grey handle */
+  border-radius: 10px; /* Rounded corners */
+  /* Space between handle and track */
+}

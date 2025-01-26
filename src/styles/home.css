@@ -1,0 +1,23 @@
+.Home{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    .home-1{
+        width:100%;
+    }
+    .home-recently-ordered,.favourites-items{
+        width:min(1400px,90vw);
+        margin:10px 20px;
+        display:flex;
+        flex-direction: column;
+    }
+    .home-recently-ordered h2,.favourites-items h2{
+        margin:10px 0px;
+        width:100%;
+        padding: 0px 20px;
+    }
+
+    
+      
+}

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./styles/poAddToList.css";
 import { useUser } from "./UserContext";
 import { db } from "./firebase-config";
 import { collection, getDocs } from "firebase/firestore";
 import { Button, TextField } from "@mui/material";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   createNewList,
@@ -19,7 +19,7 @@ const PoAddToList = ({ onClose, itemId }) => {
   const [newListName, setNewListName] = useState("");
 
   // Fetch existing lists
-  const fetchLists = async () => {
+  const fetchLists = useCallback( async () => {
     try {
       const listsRef = collection(db, `users/${uid}/lists`);
       const listsSnapshot = await getDocs(listsRef);
@@ -32,7 +32,7 @@ const PoAddToList = ({ onClose, itemId }) => {
       console.error("Error fetching lists:", error);
       toast.error("Failed to fetch lists. Please try again later.");
     }
-  };
+  }, [uid]);
 
   // Add a new list
   const handleCreateNewList = async () => {
@@ -94,7 +94,7 @@ const PoAddToList = ({ onClose, itemId }) => {
 
   useEffect(() => {
     fetchLists();
-  }, []);
+  }, [fetchLists]);
 
   return (
     <div className="poAddToListContainer">

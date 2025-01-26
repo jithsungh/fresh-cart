@@ -4,13 +4,9 @@ import { decrementCartItem } from "./functions/decrementCartItem";
 import {
   doc,
   collection,
-  query,
-  where,
   setDoc,
   getDocs,
   getDoc,
-  addDoc,
-  updateDoc,
   deleteDoc,
 } from "firebase/firestore";
 import { db } from "./firebase-config";

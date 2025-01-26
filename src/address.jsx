@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
 import "./styles/address.css";
@@ -8,7 +8,7 @@ import { deleteAddress } from "./functions/addressFunctions";
 import AddAddress from "./addAddress";
 import EditAddress from "./editAddress";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const Address = () => {
   const [addr, setAddr] = useState([]);

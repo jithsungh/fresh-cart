@@ -23,6 +23,8 @@
     font-size: 30px;
     transition: all 0.2s ease-in-out;
     border: 0px solid #f33434;
+    border-radius: 50%;
+    text-align: center;
   }
 
   .favourite:hover {
@@ -123,8 +125,6 @@
 
 .shop-container {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
   width:1200px;
 }

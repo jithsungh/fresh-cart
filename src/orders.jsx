@@ -28,7 +28,7 @@ const Orders = () => {
       const userOrdersSnapshot = await getDocs(userOrdersRef);
 
       const orderIds = userOrdersSnapshot.docs.map(
-        (doc) => doc.data().order_id
+        (doc) => doc.id
       );
 
       const orderDetails = await Promise.all(

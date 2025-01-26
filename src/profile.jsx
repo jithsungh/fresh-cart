@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase-config";
 import "./styles/profile.css";
@@ -10,7 +10,7 @@ const Profile = () => {
   const { logout } = useUser();
   const [userData, setUserData] = useState({});
 
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback( async () => {
     try {
       const docRef = doc(db, "users", uid);
       const docSnap = await getDoc(docRef);
@@ -23,11 +23,11 @@ const Profile = () => {
     } catch (error) {
       console.log("Error getting document:", error);
     }
-  };
+  }, [uid]);
 
   useEffect(() => {
     fetchUserDetails();
-  }, [uid]);
+  }, [uid,fetchUserDetails]);
 
   const handleLogout = () => {
     logout();

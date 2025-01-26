@@ -1,0 +1,122 @@
+body {
+  margin: 0;
+  background-color: #e5e5e5;
+}
+
+main {
+  width: min(
+    1400px,
+    90vw
+  ); /* Keep the main container within 90% of the viewport width */
+  margin: 20px; /* Center align the main container */
+}
+
+.slider {
+  width: 100%;
+  height: var(--height);
+  overflow: hidden;
+  box-sizing: border-box; /* Ensures padding and border are included in width/height */
+  margin: 20px 0; /* Adds spacing between sliders */
+  mask: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 1) 1%,
+    rgba(0, 0, 0, 1) 99%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.slider .slider-list {
+  display: flex;
+  width: 100%;
+  min-width: calc(
+    var(--width) * var(--quantity)
+  ); /* Dynamically adjusts based on item width and quantity */
+  position: relative;
+}
+
+.slider .slider-list .item {
+  width: calc(min(1400px, 90vw)/2); /* Width of each slider item */
+  height: calc(var(--height) - 10px); /* Adjust height to include padding */
+  position: absolute;
+  left: 100%; /* Initial off-screen position */
+  animation: autoRun 15s linear infinite;
+  transition: filter 0.5s ease-in-out;
+  animation-delay: calc(
+    (15s / var(--quantity)) * (var(--position) - 1) - 10s
+  ) !important;
+  padding: 20px; /* Space inside each item */
+  border-radius: 0px; /* Rounded edges */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center-align content */
+  justify-content: center; /* Center content vertically */
+  box-sizing: border-box; /* Includes padding in width/height */
+}
+.slider .slider-list .item img {
+  width: 100%; /* Image fills the item width */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 15px; /* Rounded corners */
+  border: 5px solid #ffffff;
+  box-shadow: 0px 0px 5px 0px #7f7f7f;
+}
+
+@keyframes autoRun {
+  0% {
+    left: 100%; /* Initial position (off-screen) */
+  }
+  10% {
+    left: calc(100% - var(--width) * 2); /* Pause for some time */
+  }
+  25% {
+    left: calc(
+      100% - var(--width) * 2
+    ); /* Slide to display the next two images */
+  }
+  35% {
+    left: calc(100% - var(--width) * 3); /* Pause for some time */
+  }
+  50% {
+    left: calc(
+      100% - var(--width) * 3
+    ); /* Slide to display the next two images */
+  }
+  60% {
+    left: calc(100% - var(--width) * 4); /* Pause for some time */
+  }
+  75% {
+    left: calc(
+      100% - var(--width) * 4
+    ); /* Slide to display the next two images */
+  }
+  85% {
+    left: calc(100% - var(--width) * 5); /* Pause for some time */
+  }
+  100% {
+    left: calc(
+      100% - var(--width) * 5
+    ); /* Slide to display the next two images */
+  }
+}
+
+.slider:hover .item {
+  animation-play-state: paused !important;
+  filter: grayscale(1); /* Dim all items */
+}
+
+.slider .item:hover {
+  filter: grayscale(0); /* Highlight hovered item */
+}
+
+.slider[reverse="true"] .item {
+  animation: reversePlay 10s linear infinite;
+}
+
+@keyframes reversePlay {
+  from {
+    left: calc(var(--width) * -1);
+  }
+  to {
+    left: 100%;
+  }
+}

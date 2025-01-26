@@ -6,6 +6,7 @@ import {
   doc,
   collection,
   getDocs,
+  setDoc,
   addDoc,
   updateDoc,
   getDoc,
@@ -226,23 +227,15 @@ function Checkout() {
 
   const handleOrderPlaced = async (orderId) => {
     toast("Order Placed Successfully: ", orderId);
-    const orderData = {
-      order_id: orderId,
-    };
     try {
       // Reference the specific user's document
-      const userDocRef = doc(db, "users", userId);
-
-      // Reference the "orders" subcollection within the user's document
-      const orderDocRef = collection(userDocRef, "orders");
+      const orderDocRef = doc(db,`users/${userId}/orders`,orderId);
 
       // Add the orderId as a document inside the "orders" subcollection
-      const DocRef = await addDoc(orderDocRef, orderData);
+      await setDoc(orderDocRef, {});
 
       console.log(
-        "Order ID added to user's orders subcollection successfully! ",
-        DocRef.id
-      );
+        "Order ID added to user's orders subcollection successfully! ");
     } catch (error) {
       console.error(
         "Error adding order ID to user's orders subcollection:",
