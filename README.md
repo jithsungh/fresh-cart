@@ -1,11 +1,16 @@
 # Getting Started with Create React App
 
-Access this website at [freshcart-user](https://fresh-cart-8d752.web.app/).\
-with dummy user credential for better experience\
-mobile - +91 7032909135.\
-otp - 123456.\
--> this user has all the presets like lists,orders etc.\
--> Can create a new Account also.\
+Access this website at [freshcart-user](https://fresh-cart-8d752.web.app/)
+
+with dummy user credential for better experience
+
+mobile - +91 7032909135
+
+otp - 123456
+
+-> this user has all the presets like lists,orders etc
+
+-> Can create a new Account also
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
