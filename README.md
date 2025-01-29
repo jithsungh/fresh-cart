@@ -4,7 +4,7 @@ Access this website at [freshcart-user](https://fresh-cart-8d752.web.app/)
 
 with dummy user credential for better experience
 
-mobile - +91 7032909135
+mobile - +91 7897897890
 
 otp - 123456
 
